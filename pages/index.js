@@ -1,2 +1,8 @@
-import './test.css'
-export default () => <span>123</span>
+import "./test.css";
+import { Button } from "antd";
+export default () => (
+  <div>
+    <span>123</span>
+    <Button>12</Button>
+  </div>
+);
