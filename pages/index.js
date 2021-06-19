@@ -4,13 +4,18 @@ import "./test.css";
 import { Button } from "antd";
 
 export default () => {
-  function gotoA () {
-    Router.push('/a')
+  function gotoA() {
+    Router.push({
+      pathname: "/a",
+      query: {
+        id: 2,
+      },
+    });
   }
   return (
     <div>
       <Button onClick={gotoA}>gotoA</Button>
-      <Link href="/a">link a</Link>
+      <Link href="/a?id=1">link a</Link>
     </div>
   );
 };
