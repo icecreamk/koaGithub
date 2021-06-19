@@ -10,3 +10,4 @@
 
 #### 启动redis
 > redis-cli
+> exit
