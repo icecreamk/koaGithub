@@ -4,11 +4,11 @@ import Layout from "../components/Layout";
 
 class MyApp extends App {
   // 重写页面中的getInitialProps
-  static async getInitialProps({ Component }) {
+  static async getInitialProps({ Component, ctx }) {
     if (!Component.getInitialProps) {
       return {};
     }
-    const pageProps = await Component.getInitialProps();
+    const pageProps = await Component.getInitialProps(ctx);
 
     return {
       pageProps,
