@@ -1,13 +1,14 @@
 import { withRouter } from "next/router";
 import styled from "styled-components";
+// import moment from "moment";
 
 const Title = styled.h1`
-  color: yellow;
+  color: #ddd;
 `;
 
-const A = ({ router, name }) => (
+const A = ({ router, name, time }) => (
   <div>
-    <Title>title</Title>
+    <Title>{time}</Title>
     {router.query.id}
     {name}
     <style jsx>
@@ -20,10 +21,19 @@ const A = ({ router, name }) => (
   </div>
 );
 // 如果是异步，需要等数据加载完，才开始渲染页面
-A.getInitialProps = async () => {
+A.getInitialProps = async (ctx) => {
+  let moment = await import("moment");
+  // let moment = require("moment");
+  if ("default" in moment) {
+    moment = moment["default"];
+  }
+  console.log(moment());
   const promise = new Promise((resolve) => {
     setTimeout(() => {
-      resolve({ name: "kkk" });
+      resolve({
+        name: "kkk",
+        time: moment(Date.now() - 60 * 1000).fromNow(),
+      });
     }, 1000);
   });
   return await promise;
