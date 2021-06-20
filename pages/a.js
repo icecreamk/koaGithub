@@ -1,6 +1,9 @@
 import { withRouter } from "next/router";
 import styled from "styled-components";
 // import moment from "moment";
+import dynamic from "next/dynamic";
+
+const LazyCom = dynamic(import("../components/Lazy"));
 
 const Title = styled.h1`
   color: #ddd;
@@ -10,6 +13,7 @@ const A = ({ router, name, time }) => (
   <div>
     <Title>{time}</Title>
     {router.query.id}
+    <LazyCom />
     {name}
     <style jsx>
       {`
