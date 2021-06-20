@@ -1,7 +1,13 @@
 import { withRouter } from "next/router";
+import styled from "styled-components";
+
+const Title = styled.h1`
+  color: yellow;
+`;
 
 const A = ({ router, name }) => (
   <div>
+    <Title>title</Title>
     {router.query.id}
     {name}
     <style jsx>
@@ -18,7 +24,7 @@ A.getInitialProps = async () => {
   const promise = new Promise((resolve) => {
     setTimeout(() => {
       resolve({ name: "kkk" });
-    }, 2000);
+    }, 1000);
   });
   return await promise;
 };
