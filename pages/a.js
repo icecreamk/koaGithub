@@ -1,5 +1,10 @@
 import { withRouter } from "next/router";
 
-const A = ({ router }) => <div>{router.query.id}</div>;
+const A = ({ router, name }) => <div>{router.query.id}{name}</div>;
+A.getInitialProps = () => {
+    return {
+        name: 'kkk'
+    }
+}
 
 export default withRouter(A);
