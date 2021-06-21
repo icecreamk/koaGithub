@@ -1,6 +1,8 @@
 import App from "next/app";
+import { Provider } from "react-redux"
 import "antd/dist/antd.css";
 import Layout from "../components/Layout";
+import store from '../store/store'
 
 class MyApp extends App {
   // 重写页面中的getInitialProps
@@ -19,7 +21,9 @@ class MyApp extends App {
     return (
       <div className="root">
         <Layout>
-          <Component {...pageProps} />
+          <Provider store={store()}>
+            <Component {...pageProps} />
+          </Provider>
         </Layout>
       </div>
     );
