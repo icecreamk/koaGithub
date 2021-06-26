@@ -3,7 +3,7 @@ import { Provider } from "react-redux"
 import "antd/dist/antd.css";
 import Layout from "../components/Layout";
 import store from '../store/store'
-
+import TestHocComp from '../lib/test-hoc'
 class MyApp extends App {
   // 重写页面中的getInitialProps
   static async getInitialProps({ Component, ctx }) {
@@ -30,4 +30,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp;
+export default TestHocComp(MyApp);
