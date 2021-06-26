@@ -21,7 +21,7 @@ class RedisSessionStore {
     }
     try {
       const result = JSON.parse(data);
-      debug(`get session: ${sid}`, result.githubAuth, result.user.login);
+      debug(`get session: ${sid}`, result.githubAuth, result.userInfo.login);
       return result;
     } catch (err) {
       debug("parse session error:", err);
@@ -38,13 +38,13 @@ class RedisSessionStore {
     debug(`SET ${sid} ${sess}`);
     const sessStr = JSON.stringify(sess);
     if (ttl) {
-      //   debug(
-      //     `SETEX ${sid} ${ttl} ${sess.githubAuth.access_token} ${sess.user.login}`
-      //   );
+      debug(
+        `SETEX ${sid} ${ttl} ${sess.githubAuth.access_token} ${sess.userInfo.login}`
+      );
       //   setex 表示设置有过期时间的值
       await this.client.setex(id, ttl, sessStr);
     } else {
-      //   debug(`SETEX ${sid} ${sess.githubAuth.access_token} ${sess.user.login}`);
+      debug(`SETEX ${sid} ${sess.githubAuth.access_token} ${sess.userInfo.login}`);
       await this.client.set(id, sessStr);
     }
     debug(`SET ${sid} complete`);

@@ -1,11 +1,19 @@
+import axios from "axios";
+import { useEffect } from "react";
 import Link from "next/link";
 import Router from "next/router";
 import "./test.css";
 import { Button } from "antd";
 import { connect } from "react-redux";
 import { add } from "../store/store";
+import getConifg from "next/config"; // next.config.js中当配置
+
+const { publicRuntimeConfig } = getConifg();
 
 const Index = ({ count, username, add, rename }) => {
+  useEffect(() => {
+    axios.get("/api/user/info").then((resp) => console.log(resp));
+  }, []);
   function gotoA() {
     Router.push(
       {
@@ -39,14 +47,15 @@ const Index = ({ count, username, add, rename }) => {
       >
         rename
       </Button>
+      <a href={publicRuntimeConfig.OAUTH_URL}>登录</a>
     </div>
   );
 };
 
-Index.getInitialProps = async({reduxStore}) => {
-  reduxStore.dispatch(add(5))
-  return {}
-}
+Index.getInitialProps = async ({ reduxStore }) => {
+  reduxStore.dispatch(add(5));
+  return {};
+};
 
 export default connect(
   function mapStateToProps(state) {

@@ -4,6 +4,7 @@ const next = require("next");
 const session = require("koa-session");
 const RedisSessionStore = require("./server/session-store");
 const Redis = require("ioredis");
+const auth = require("./server/auth");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -25,23 +26,8 @@ app.prepare().then(() => {
 
   server.use(session(SESSION_CONFIG, server));
 
-  server.use(async (ctx, next) => {
-    console.log("user", ctx.session);
-    await next();
-  });
-
-  router.get("/set/user", async (ctx) => {
-    ctx.session.user = {
-      name: "xxx",
-      age: "18",
-    };
-    ctx.body = "set success";
-  });
-
-  router.get("/del/user", async (ctx) => {
-    ctx.session = null;
-    ctx.body = "del success";
-  });
+  // github OAuth
+  auth(server);
 
   router.get("/a/:id", async (ctx) => {
     const id = ctx.params.id;
@@ -50,6 +36,17 @@ app.prepare().then(() => {
       query: { id },
     });
     ctx.respond = false;
+  });
+
+  router.get("/api/user/info", async (ctx) => {
+    const user = ctx.session.userInfo;
+    if (!user) {
+      ctx.status = 401;
+      ctx.body = "Need Login";
+    } else {
+      ctx.body = user;
+      ctx.set("Content-Type", "application/json");
+    }
   });
 
   server.use(router.routes());

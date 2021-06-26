@@ -31,7 +31,6 @@ A.getInitialProps = async (ctx) => {
   if ("default" in moment) {
     moment = moment["default"];
   }
-  console.log(moment());
   const promise = new Promise((resolve) => {
     setTimeout(() => {
       resolve({
