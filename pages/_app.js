@@ -1,12 +1,12 @@
 import App from "next/app";
-import { Provider } from "react-redux"
+import { Provider } from "react-redux";
 import "antd/dist/antd.css";
 import Layout from "../components/Layout";
-import store from '../store/store'
-import TestHocComp from '../lib/test-hoc'
+import WithReduxApp from "../lib/with-redux";
 class MyApp extends App {
   // 重写页面中的getInitialProps
-  static async getInitialProps({ Component, ctx }) {
+  static async getInitialProps(ctx) {
+    const { Component } = ctx;
     if (!Component.getInitialProps) {
       return {};
     }
@@ -17,11 +17,11 @@ class MyApp extends App {
     };
   }
   render() {
-    const { Component, pageProps = {} } = this.props;
+    const { Component, pageProps = {}, reduxStore } = this.props;
     return (
       <div className="root">
         <Layout>
-          <Provider store={store()}>
+          <Provider store={reduxStore}>
             <Component {...pageProps} />
           </Provider>
         </Layout>
@@ -30,4 +30,4 @@ class MyApp extends App {
   }
 }
 
-export default TestHocComp(MyApp);
+export default WithReduxApp(MyApp);

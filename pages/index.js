@@ -3,6 +3,7 @@ import Router from "next/router";
 import "./test.css";
 import { Button } from "antd";
 import { connect } from "react-redux";
+import { add } from "../store/store";
 
 const Index = ({ count, username, add, rename }) => {
   function gotoA() {
@@ -41,6 +42,11 @@ const Index = ({ count, username, add, rename }) => {
     </div>
   );
 };
+
+Index.getInitialProps = async({reduxStore}) => {
+  reduxStore.dispatch(add(5))
+  return {}
+}
 
 export default connect(
   function mapStateToProps(state) {
