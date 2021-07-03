@@ -7,7 +7,9 @@ import Container from "./Container";
 
 const { Header, Content, Footer } = Layout;
 
-const MyComp = ({ color, children }) => <div style={{ color }}>{children}</div>;
+const MyComp = ({ color, children, style }) => (
+  <div style={{ color, ...style }}>{children}</div>
+);
 
 export default ({ children }) => {
   const [search, setSearch] = useState("");
@@ -48,7 +50,7 @@ export default ({ children }) => {
   return (
     <Layout>
       <Header>
-        <div className="header-inner">
+        <Container renderer={<div className="header-inner" />}>
           <div className="header-left">
             <div className="logo">
               <Link href="/">
@@ -69,10 +71,15 @@ export default ({ children }) => {
               <Avatar size={40} icon="user" />
             </div>
           </div>
-        </div>
+        </Container>
       </Header>
       <Content>
-        <Container><MyComp color="red">{children}</MyComp></Container>
+        <Container
+          renderer={<MyComp color="red" />}
+          styles={{ fontSize: "40px" }}
+        >
+          {children}
+        </Container>
       </Content>
       <Footer style={footerStyle}>develop by kkk</Footer>
       <style jsx>{`
