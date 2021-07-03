@@ -12,6 +12,7 @@
 
 #### 启动 redis
 
+> redis-server redis.conf
 > redis-cli
 > exit
 
@@ -28,3 +29,11 @@
 - 认证可以通过手机号、邮箱、账号密码等方式
 - 认证成功后，就可以对用户进行授权访问内容
 - 授权不一定都需要认证，通常上一次认证生成的key会保存在客户端，key过期之前，用户都不需要重新认证
+
+
+#### Comp大写开头，react才会解析
+``` javascript
+export default ({ children, comp: Comp }) => {
+  return <Comp style={style}>{children}</Comp>;
+}
+````

@@ -3,8 +3,11 @@ import Link from "next/link";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { Layout, Menu, Input, Avatar, Tooltip, Icon, Dropdown } from "antd";
+import Container from "./Container";
 
 const { Header, Content, Footer } = Layout;
+
+const MyComp = ({ color, children }) => <div style={{ color }}>{children}</div>;
 
 export default ({ children }) => {
   const [search, setSearch] = useState("");
@@ -68,7 +71,9 @@ export default ({ children }) => {
           </div>
         </div>
       </Header>
-      <Content>{children}</Content>
+      <Content>
+        <Container comp="div">{children}</Container>
+      </Content>
       <Footer style={footerStyle}>develop by kkk</Footer>
       <style jsx>{`
         .content {
