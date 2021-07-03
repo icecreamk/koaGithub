@@ -6,6 +6,7 @@ import { Layout, Menu, Input, Avatar, Tooltip, Icon, Dropdown } from "antd";
 import Container from "./Container";
 import getConfig from "next/config";
 import { logout } from "../store";
+import axios from "axios";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -15,7 +16,7 @@ const MyComp = ({ color, children, style }) => (
   <div style={{ color, ...style }}>{children}</div>
 );
 
-function MyLayout({ children, user, logout }) {
+function MyLayout({ children, user, logout, router }) {
   const [search, setSearch] = useState("");
   // useEffect(() => {
   //   if (queryText && !search) {
@@ -49,6 +50,22 @@ function MyLayout({ children, user, logout }) {
 
   const handleLogout = useCallback(() => {
     logout();
+  }, [logout]);
+
+  const handleGotoOAuth = useCallback((e) => {
+    e.preventDefault();
+    axios
+      .get(`/prepare-auth?url=${router.asPath}`)
+      .then((res) => {
+        if (res.status === 200) {
+          location.href = publicRuntimeConfig.OAUTH_URL;
+        } else {
+          console.log("prepare auth failed");
+        }
+      })
+      .catch((err) => {
+        console.log("prepare", err);
+      });
   });
 
   const userDropdown = (
@@ -87,7 +104,10 @@ function MyLayout({ children, user, logout }) {
                 </Dropdown>
               ) : (
                 <Tooltip title="点击进行登录">
-                  <a href={publicRuntimeConfig.OAUTH_URL}>
+                  <a
+                    // href={publicRuntimeConfig.OAUTH_URL}
+                    onClick={handleGotoOAuth}
+                  >
                     <Avatar size={40} icon="user" />
                   </a>
                 </Tooltip>
@@ -148,4 +168,4 @@ export default connect(
       logout: () => dispatch(logout()),
     };
   }
-)(MyLayout);
+)(withRouter(MyLayout));
