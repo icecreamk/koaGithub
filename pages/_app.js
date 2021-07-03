@@ -9,7 +9,6 @@ import Layout from "../components/Layout";
 import WithReduxApp from "../lib/with-redux";
 
 import PageLoading from "../components/PageLoading";
-import axios from "axios";
 class MyApp extends App {
   state = {
     loading: false,
@@ -19,7 +18,6 @@ class MyApp extends App {
     Router.events.on("routeChangeStart", this.startLoading);
     Router.events.on("routeChangeComplete", this.stopLoading);
     Router.events.on("routeChangeError", this.stopLoading);
-    axios.get('github/search/repositories?q=react')
   }
 
   componentWillUnmount() {

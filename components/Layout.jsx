@@ -17,7 +17,9 @@ const MyComp = ({ color, children, style }) => (
 );
 
 function MyLayout({ children, user, logout, router }) {
-  const [search, setSearch] = useState("");
+  const urlQuery = router.query && router.query.query;
+
+  const [search, setSearch] = useState(urlQuery || "");
   // useEffect(() => {
   //   if (queryText && !search) {
   //     setSearch(queryText);
@@ -40,9 +42,10 @@ function MyLayout({ children, user, logout, router }) {
     setSearch(e.target.value);
   }, []);
 
+  // 跳转search页
   const handleSearch = useCallback(() => {
     Router.push(`/search?query=${search}`);
-  });
+  }, [search]);
 
   const handleAvatarClick = useCallback((e) => {
     e.preventDefault();
