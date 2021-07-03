@@ -2,22 +2,8 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import ReduxThunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
-const initialState = {
-  count: 0,
-}
 
 const userInitialState = {
-  username: 'xxx',
-}
-
-const ADD = 'ADD'
-function counterReducer(state = initialState, action) {
-  switch (action.type) {
-    case ADD:
-      return { count: state.count + (action.num || 1) }
-    default:
-      return state
-  }
 }
 
 const UPDATE_USERNAME = 'UPDATE_USERNAME'
@@ -34,17 +20,9 @@ function userReducer(state = userInitialState, action) {
 }
 
 const allReducers = combineReducers({
-  counter: counterReducer,
   user: userReducer,
 })
 
-// action creatore
-export function add(num) {
-  return {
-    type: ADD,
-    num,
-  }
-}
 
 export default function initializeStore(state) {
   const store = createStore(
@@ -52,7 +30,6 @@ export default function initializeStore(state) {
     Object.assign(
       {},
       {
-        counter: initialState,
         user: userInitialState,
       },
       state,
