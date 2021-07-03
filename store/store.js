@@ -1,30 +1,43 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import ReduxThunk from 'redux-thunk'
-import { composeWithDevTools } from 'redux-devtools-extension'
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import ReduxThunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+import axios from "axios";
 
+const LOGOUT = "LOGOUT";
 
-const userInitialState = {
-}
+const userInitialState = {};
 
-const UPDATE_USERNAME = 'UPDATE_USERNAME'
 function userReducer(state = userInitialState, action) {
   switch (action.type) {
-    case UPDATE_USERNAME:
-      return {
-        ...state,
-        username: action.name,
-      }
+    case LOGOUT:
+      return {};
     default:
-      return state
+      return state;
   }
 }
 
 const allReducers = combineReducers({
   user: userReducer,
-})
+});
 
+export function logout() {
+  return (dispatch) => {
+    axios
+      .post("/logout")
+      .then((resp) => {
+        if (resp.status === 200) {
+          dispatch({ type: LOGOUT });
+        } else {
+          console.log("logout error");
+        }
+      })
+      .catch((err) => {
+        console.log("logout faild", err);
+      });
+  };
+}
 
-export default function initializeStore(state) {
+export function initializeStore(state) {
   const store = createStore(
     allReducers,
     Object.assign(
@@ -32,10 +45,10 @@ export default function initializeStore(state) {
       {
         user: userInitialState,
       },
-      state,
+      state
     ),
-    composeWithDevTools(applyMiddleware(ReduxThunk)),
-  )
+    composeWithDevTools(applyMiddleware(ReduxThunk))
+  );
 
-  return store
+  return store;
 }

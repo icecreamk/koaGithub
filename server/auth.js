@@ -5,7 +5,6 @@ const { client_id, client_secret, request_token_url } = config.github;
 
 module.exports = (server) => {
   server.use(async (ctx, next) => {
-
     if (ctx.path === "/auth") {
       const code = ctx.query.code;
       if (!code) {
@@ -46,6 +45,17 @@ module.exports = (server) => {
       }
     } else {
       await next();
+    }
+  });
+
+  server.use(async (ctx, next) => {
+    const path = ctx.path;
+    const method = ctx.method;
+    if (path === "/logout" && method === "POST") {
+      ctx.session = null;
+      ctx.body = `logout success`;
+    } else {
+      await next()
     }
   });
 };

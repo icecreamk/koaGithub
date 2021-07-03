@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Layout, Menu, Input, Avatar, Tooltip, Icon, Dropdown } from "antd";
 import Container from "./Container";
 import getConfig from "next/config";
+import { logout } from "../store";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -14,9 +15,8 @@ const MyComp = ({ color, children, style }) => (
   <div style={{ color, ...style }}>{children}</div>
 );
 
-function MyLayout({ children, user }) {
+function MyLayout({ children, user, logout }) {
   const [search, setSearch] = useState("");
-  console.log(user);
   // useEffect(() => {
   //   if (queryText && !search) {
   //     setSearch(queryText);
@@ -48,7 +48,7 @@ function MyLayout({ children, user }) {
   }, []);
 
   const handleLogout = useCallback(() => {
-    // logout();
+    logout();
   });
 
   const userDropdown = (
@@ -83,9 +83,7 @@ function MyLayout({ children, user }) {
             <div className="user">
               {user && user.id ? (
                 <Dropdown overlay={userDropdown}>
-                  <a href="/">
-                    <Avatar size={40} icon="user" src={user.avatar_url} />
-                  </a>
+                  <Avatar size={40} icon="user" src={user.avatar_url} />
                 </Dropdown>
               ) : (
                 <Tooltip title="点击进行登录">
@@ -139,8 +137,15 @@ function MyLayout({ children, user }) {
   );
 }
 
-export default connect(function mapStateToProps(state) {
-  return {
-    user: state.user,
-  };
-})(MyLayout);
+export default connect(
+  function mapStateToProps(state) {
+    return {
+      user: state.user,
+    };
+  },
+  function mapDispatchToProps(dispatch) {
+    return {
+      logout: () => dispatch(logout()),
+    };
+  }
+)(MyLayout);
