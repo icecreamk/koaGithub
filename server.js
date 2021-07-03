@@ -5,6 +5,7 @@ const session = require("koa-session");
 const RedisSessionStore = require("./server/session-store");
 const Redis = require("ioredis");
 const auth = require("./server/auth");
+const api = require("./server/api");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -29,6 +30,8 @@ app.prepare().then(() => {
   // github OAuth
   auth(server);
 
+  api(server);
+
   router.get("/a/:id", async (ctx) => {
     const id = ctx.params.id;
     await handle(ctx.req, ctx.res, {
@@ -52,7 +55,7 @@ app.prepare().then(() => {
   server.use(router.routes());
 
   server.use(async (ctx, next) => {
-    ctx.req.session = ctx.session
+    ctx.req.session = ctx.session;
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
   });

@@ -25,10 +25,8 @@ module.exports = (server) => {
       });
 
       if (result.status === 200 && result.data && !result.data.error) {
-        console.log(result.data)
         ctx.session.githubAuth = result.data;
 
-        console.log('aaaaaa', result.data)
 
         const { access_token, token_type } = result.data;
 
@@ -69,6 +67,7 @@ module.exports = (server) => {
     if (path === "/prepare-auth" && method === "GET") {
       const { url } = ctx.query;
       ctx.session.urlBeforeOAuth = url;
+      // ctx.redirect(config.OAUTH_URL)
       ctx.body = `ready`;
     } else {
       await next();

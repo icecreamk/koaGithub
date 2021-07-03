@@ -105,8 +105,8 @@ function MyLayout({ children, user, logout, router }) {
               ) : (
                 <Tooltip title="点击进行登录">
                   <a
-                    // href={publicRuntimeConfig.OAUTH_URL}
-                    onClick={handleGotoOAuth}
+                    href={publicRuntimeConfig.OAUTH_URL}
+                    // onClick={handleGotoOAuth}
                   >
                     <Avatar size={40} icon="user" />
                   </a>
