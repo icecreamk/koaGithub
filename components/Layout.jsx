@@ -72,7 +72,7 @@ export default ({ children }) => {
         </div>
       </Header>
       <Content>
-        <Container comp="div">{children}</Container>
+        <Container><MyComp color="red">{children}</MyComp></Container>
       </Content>
       <Footer style={footerStyle}>develop by kkk</Footer>
       <style jsx>{`
