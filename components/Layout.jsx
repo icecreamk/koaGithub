@@ -4,6 +4,9 @@ import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { Layout, Menu, Input, Avatar, Tooltip, Icon, Dropdown } from "antd";
 import Container from "./Container";
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
 
 const { Header, Content, Footer } = Layout;
 
@@ -11,9 +14,9 @@ const MyComp = ({ color, children, style }) => (
   <div style={{ color, ...style }}>{children}</div>
 );
 
-export default ({ children }) => {
+function MyLayout({ children, user }) {
   const [search, setSearch] = useState("");
-
+  console.log(user);
   // useEffect(() => {
   //   if (queryText && !search) {
   //     setSearch(queryText);
@@ -45,8 +48,18 @@ export default ({ children }) => {
   }, []);
 
   const handleLogout = useCallback(() => {
-    logout();
+    // logout();
   });
+
+  const userDropdown = (
+    <Menu>
+      <Menu.Item>
+        <a href="javascript:void(0)" onClick={handleLogout}>
+          登出
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <Layout>
       <Header>
@@ -68,7 +81,19 @@ export default ({ children }) => {
           </div>
           <div className="header-right">
             <div className="user">
-              <Avatar size={40} icon="user" />
+              {user && user.id ? (
+                <Dropdown overlay={userDropdown}>
+                  <a href="/">
+                    <Avatar size={40} icon="user" src={user.avatar_url} />
+                  </a>
+                </Dropdown>
+              ) : (
+                <Tooltip title="点击进行登录">
+                  <a href={publicRuntimeConfig.OAUTH_URL}>
+                    <Avatar size={40} icon="user" />
+                  </a>
+                </Tooltip>
+              )}
             </div>
           </div>
         </Container>
@@ -112,4 +137,10 @@ export default ({ children }) => {
       `}</style>
     </Layout>
   );
-};
+}
+
+export default connect(function mapStateToProps(state) {
+  return {
+    user: state.user,
+  };
+})(MyLayout);
