@@ -1,17 +1,40 @@
 import axios from "axios";
-
+import { useEffect } from "react";
 const api = require("../lib/api");
 
-function Index() {
+function Index({ userProps, userStared }) {
+  useEffect(() => {
+    console.log(userProps, userStared);
+  }, []);
+
   return <span>index</span>;
 }
-Index.getInitialProps = async (ctx) => {
-  const result = await api.request({
-      url: '/search/repositories?q=react'
-  }, ctx.req, ctx.res);
-  console.log(result)
+Index.getInitialProps = async ({ ctx, reduxStore }) => {
+  const initData = reduxStore.getState();
+  if (!initData.user || !initData.user.id) {
+    return {
+      isLogin: false,
+    };
+  }
+  const userProps = await api.request(
+    {
+      url: `/users/${initData.user.name}/repos`,
+    },
+    ctx.req,
+    ctx.res
+  );
+  const userStared = await api.request(
+    {
+      url: `/users/${initData.user.name}/starred`,
+    },
+    ctx.req,
+    ctx.res
+  );
+
   return {
-    data: result.data,
+    isLogin: true,
+    userProps: userProps.data,
+    userStared: userStared.data,
   };
 };
 
