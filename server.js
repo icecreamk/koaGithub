@@ -6,6 +6,7 @@ const RedisSessionStore = require("./server/session-store");
 const Redis = require("ioredis");
 const auth = require("./server/auth");
 const api = require("./server/api");
+const KoaBody = require("koa-body");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -20,6 +21,8 @@ app.prepare().then(() => {
   const router = new Router();
 
   server.keys = ["kkxxll for safe"]; // 用于加密的随机字符串
+
+  server.use(KoaBody());
   const SESSION_CONFIG = {
     key: "sessionId",
     store: new RedisSessionStore(redis),

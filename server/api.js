@@ -20,7 +20,7 @@ module.exports = (server) => {
       const result = await requestGithub(
         method,
         ctx.url.replace("/github/", "/"),
-        ctx.request.body || {},
+        ctx.request.body || {}, // koa-body 中间件
         headers
       );
 
