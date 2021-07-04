@@ -3,18 +3,47 @@ import { Button, Icon, Tabs } from "antd";
 import getCofnig from "next/config";
 import { connect } from "react-redux";
 import Router, { withRouter } from "next/router";
-import Repo from '../components/Repo'
+import Repo from "../components/Repo";
+// import LRU from "lru-cache";
+
+// import { cacheArray } from "../lib/repo-basic-cache";
 
 const api = require("../lib/api");
 
+// const cache = new LRU({
+//   maxAge: 1000 * 10,
+// })
+
 const { publicRuntimeConfig } = getCofnig();
+
+let cachedUserRepos, cachedUserStaredRepos;
 
 const isServer = typeof window === "undefined";
 
 function Index({ userRepos, userStaredRepos, user, router }) {
-  const tabKey = router.query.key || '1'
+  const tabKey = router.query.key || "1";
+
   useEffect(() => {
     if (!isServer) {
+      cachedUserRepos = userRepos;
+      cachedUserStaredRepos = userStaredRepos;
+      // if (userRepos) {
+      //   cache.set('userRepos', userRepos)
+      // }
+      // if (userStaredRepos) {
+      //   cache.set('userStaredRepos', userStaredRepos)
+      // }
+      const timeout = setTimeout(() => {
+        cachedUserRepos = null;
+        cachedUserStaredRepos = null;
+      }, 1000 * 60 * 10);
+    }
+  }, [userRepos, userStaredRepos]);
+
+  useEffect(() => {
+    if (!isServer) {
+      // cacheArray(userRepos);
+      // cacheArray(userStaredRepos);
     }
   });
 
@@ -37,18 +66,16 @@ function Index({ userRepos, userStaredRepos, user, router }) {
       </div>
     );
   }
-
-  const handleTabChange = activeKey => {
-    Router.push(`/?key=${activeKey}`)
-  }
-
+  const handleTabChange = (activeKey) => {
+    Router.push(`/?key=${activeKey}`);
+  };
   return (
     <div className="root">
       <div className="user-info">
         <img src={user.avatar_url} alt="user avatar" className="avatar" />
         <span className="login">{user.login}</span>
         <span className="name">{user.name}</span>
-        <span className="bio">{user.bio || " "}</span>
+        <span className="bio">{user.bio}</span>
         <p className="email">
           <Icon type="mail" style={{ marginRight: 10 }} />
           <a href={`mailto:${user.email}`}>{user.email}</a>
@@ -106,22 +133,31 @@ function Index({ userRepos, userStaredRepos, user, router }) {
   );
 }
 Index.getInitialProps = async ({ ctx, reduxStore }) => {
-  const initData = reduxStore.getState();
-  if (!initData.user || !initData.user.id) {
+  const user = reduxStore.getState().user;
+  if (!user || !user.id) {
     return {
       isLogin: false,
     };
   }
-  const userProps = await api.request(
+
+  if (!isServer) {
+    if (cachedUserRepos && cachedUserStaredRepos) {
+      return {
+        userRepos: cachedUserRepos,
+        userStaredRepos: cachedUserStaredRepos,
+      };
+    }
+  }
+  const userRepos = await api.request(
     {
-      url: `/users/${initData.user.name}/repos`,
+      url: `/users/${user.name}/repos`,
     },
     ctx.req,
     ctx.res
   );
-  const userStared = await api.request(
+  const userStaredRepos = await api.request(
     {
-      url: `/users/${initData.user.name}/starred`,
+      url: `/users/${user.name}/starred`,
     },
     ctx.req,
     ctx.res
@@ -129,11 +165,16 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
 
   return {
     isLogin: true,
-    userRepos: userProps.data,
-    userStaredRepos: userStared.data,
+    userRepos: userRepos.data,
+    userStaredRepos: userStaredRepos.data,
   };
 };
 
+// 处理缓存时，需要注意，服务端渲染中的变量是会一直存在在node服务中
+// 所以需要判断非服务端环境，才使用变量进行缓存
+
+// 由于登出后，不会加载该页面，因此getInitialProps不会执行，登录状态不会更新
+// 所以需要根据connect获取最新的登录状态
 export default withRouter(
   connect(function mapState(state) {
     return {
