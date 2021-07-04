@@ -4,15 +4,15 @@ import getCofnig from "next/config";
 import { connect } from "react-redux";
 import Router, { withRouter } from "next/router";
 import Repo from "../components/Repo";
-// import LRU from "lru-cache";
+import LRU from "lru-cache";
 
 // import { cacheArray } from "../lib/repo-basic-cache";
 
 const api = require("../lib/api");
 
-// const cache = new LRU({
-//   maxAge: 1000 * 10,
-// })
+const cache = new LRU({
+  maxAge: 1000 * 10,
+})
 
 const { publicRuntimeConfig } = getCofnig();
 
@@ -25,18 +25,12 @@ function Index({ userRepos, userStaredRepos, user, router }) {
 
   useEffect(() => {
     if (!isServer) {
-      cachedUserRepos = userRepos;
-      cachedUserStaredRepos = userStaredRepos;
-      // if (userRepos) {
-      //   cache.set('userRepos', userRepos)
-      // }
-      // if (userStaredRepos) {
-      //   cache.set('userStaredRepos', userStaredRepos)
-      // }
-      const timeout = setTimeout(() => {
-        cachedUserRepos = null;
-        cachedUserStaredRepos = null;
-      }, 1000 * 60 * 10);
+      if (userRepos) {
+        cache.set('userRepos', userRepos)
+      }
+      if (userStaredRepos) {
+        cache.set('userStaredRepos', userStaredRepos)
+      }
     }
   }, [userRepos, userStaredRepos]);
 
@@ -141,11 +135,17 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
   }
 
   if (!isServer) {
-    if (cachedUserRepos && cachedUserStaredRepos) {
+    // if (cachedUserRepos && cachedUserStaredRepos) {
+    //   return {
+    //     userRepos: cachedUserRepos,
+    //     userStaredRepos: cachedUserStaredRepos,
+    //   };
+    // }
+    if (cache.get('userRepos') && cache.get('userStaredRepos')) {
       return {
-        userRepos: cachedUserRepos,
-        userStaredRepos: cachedUserStaredRepos,
-      };
+        userRepos: cache.get('userRepos'),
+        userStaredRepos: cache.get('userStaredRepos'),
+      }
     }
   }
   const userRepos = await api.request(
@@ -169,6 +169,9 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
     userStaredRepos: userStaredRepos.data,
   };
 };
+
+// 由于withRouter和connect的生命周期可能会冲突
+// 导致tab中的激活key可能不准确，因此将withRouter放在外层
 
 // 处理缓存时，需要注意，服务端渲染中的变量是会一直存在在node服务中
 // 所以需要判断非服务端环境，才使用变量进行缓存
