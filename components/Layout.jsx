@@ -121,8 +121,8 @@ function MyLayout({ children, user, logout, router }) {
       </Header>
       <Content>
         <Container
-          renderer={<MyComp color="red" />}
-          styles={{ fontSize: "40px" }}
+          renderer={<MyComp color="#222" />}
+          styles={{ fontSize: "18px" }}
         >
           {children}
         </Container>
@@ -130,7 +130,6 @@ function MyLayout({ children, user, logout, router }) {
       <Footer style={footerStyle}>develop by kkk</Footer>
       <style jsx>{`
         .content {
-          color: red;
         }
         .header-inner {
           display: flex;
