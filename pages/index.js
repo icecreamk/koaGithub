@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { Button, Icon, Tabs } from "antd";
 import getCofnig from "next/config";
 import { connect } from "react-redux";
-import { withRouter } from "next/router";
+import Router, { withRouter } from "next/router";
+import Repo from '../components/Repo'
 
 const api = require("../lib/api");
 
@@ -11,6 +12,7 @@ const { publicRuntimeConfig } = getCofnig();
 const isServer = typeof window === "undefined";
 
 function Index({ userRepos, userStaredRepos, user, router }) {
+  const tabKey = router.query.key || '1'
   useEffect(() => {
     if (!isServer) {
     }
@@ -36,6 +38,10 @@ function Index({ userRepos, userStaredRepos, user, router }) {
     );
   }
 
+  const handleTabChange = activeKey => {
+    Router.push(`/?key=${activeKey}`)
+  }
+
   return (
     <div className="root">
       <div className="user-info">
@@ -49,7 +55,7 @@ function Index({ userRepos, userStaredRepos, user, router }) {
         </p>
       </div>
       <div className="user-repos">
-        {/* <Tabs activeKey={tabKey} onChange={handleTabChange} animated={false}>
+        <Tabs activeKey={tabKey} onChange={handleTabChange} animated={false}>
           <Tabs.TabPane tab="你的仓库" key="1">
             {userRepos.map((repo) => (
               <Repo key={repo.id} repo={repo} />
@@ -60,7 +66,7 @@ function Index({ userRepos, userStaredRepos, user, router }) {
               <Repo key={repo.id} repo={repo} />
             ))}
           </Tabs.TabPane>
-        </Tabs> */}
+        </Tabs>
       </div>
       <style jsx>{`
         .root {
